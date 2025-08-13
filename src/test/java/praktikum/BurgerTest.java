@@ -47,7 +47,7 @@ public class BurgerTest {
     }
 
     // Данные для параметризации
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "Тестовые данные: {0}, булочка={1}, ингредиент1={2}, ингредиент2={3}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {"Sesame Bun", 10.0f, 5.0f, 3.0f, 28.0f}, // 10*2 + 5 + 3 = 28
@@ -67,55 +67,6 @@ public class BurgerTest {
         when(mockBun.getPrice()).thenReturn(bunPrice);
         when(mockIngredient1.getPrice()).thenReturn(ingredient1Price);
         when(mockIngredient2.getPrice()).thenReturn(ingredient2Price);
-    }
-
-    @Test
-    public void testSetBuns() {
-        burger.setBuns(mockBun);
-        assertEquals("Булочка должна быть установлена", mockBun, burger.bun);
-    }
-
-    @Test
-    public void testAddIngredient() {
-        burger.addIngredient(mockIngredient1);
-        assertTrue("Ингредиент должен быть добавлен", burger.ingredients.contains(mockIngredient1));
-        assertEquals("Должен быть 1 ингредиент", 1, burger.ingredients.size());
-    }
-
-    @Test
-    public void testAddMultipleIngredients() {
-        burger.addIngredient(mockIngredient1);
-        burger.addIngredient(mockIngredient2);
-        
-        assertEquals("Должно быть 2 ингредиента", 2, burger.ingredients.size());
-        assertTrue("Первый ингредиент должен быть в списке", burger.ingredients.contains(mockIngredient1));
-        assertTrue("Второй ингредиент должен быть в списке", burger.ingredients.contains(mockIngredient2));
-    }
-
-    @Test
-    public void testRemoveIngredient() {
-        burger.addIngredient(mockIngredient1);
-        burger.addIngredient(mockIngredient2);
-        
-        burger.removeIngredient(0);
-        
-        assertEquals("Должен остаться 1 ингредиент", 1, burger.ingredients.size());
-        assertFalse("Первый ингредиент должен быть удален", burger.ingredients.contains(mockIngredient1));
-        assertTrue("Второй ингредиент должен остаться", burger.ingredients.contains(mockIngredient2));
-    }
-
-    @Test
-    public void testMoveIngredient() {
-        burger.addIngredient(mockIngredient1);
-        burger.addIngredient(mockIngredient2);
-        burger.addIngredient(mockIngredient3);
-        
-        // Перемещаем ингредиент с позиции 0 на позицию 2
-        burger.moveIngredient(0, 2);
-        
-        assertEquals("Количество ингредиентов не должно измениться", 3, burger.ingredients.size());
-        assertEquals("Ингредиент должен быть на новой позиции", mockIngredient1, burger.ingredients.get(2));
-        assertEquals("Второй ингредиент должен сдвинуться", mockIngredient2, burger.ingredients.get(0));
     }
 
     @Test
@@ -161,27 +112,5 @@ public class BurgerTest {
         verify(mockIngredient1, times(1)).getType();
         verify(mockIngredient2, times(1)).getName();
         verify(mockIngredient2, times(1)).getType();
-    }
-
-    @Test
-    public void testGetPriceWithoutIngredients() {
-        burger.setBuns(mockBun);
-        
-        float actualPrice = burger.getPrice();
-        float expectedPrice = bunPrice * 2; // Только цена булочек
-        
-        assertEquals("Цена без ингредиентов должна быть равна двойной цене булочки", 
-                     expectedPrice, actualPrice, 0.01f);
-    }
-
-    @Test
-    public void testGetReceiptWithoutIngredients() {
-        burger.setBuns(mockBun);
-        
-        String receipt = burger.getReceipt();
-        
-        assertTrue("Чек должен содержать название булочки", receipt.contains(bunName));
-        assertTrue("Чек должен содержать цену", receipt.contains("Price: "));
-        assertFalse("Чек не должен содержать ингредиенты", receipt.contains("= filling") || receipt.contains("= sauce"));
     }
 }

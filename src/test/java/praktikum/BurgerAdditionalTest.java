@@ -35,14 +35,22 @@ public class BurgerAdditionalTest {
     }
 
     @Test
-    public void testInitialState() {
+    public void testInitialStateBunIsNull() {
         assertNull("Изначально булочка должна быть null", burger.bun);
+    }
+
+    @Test
+    public void testInitialStateIngredientsNotNull() {
         assertNotNull("Список ингредиентов должен быть инициализирован", burger.ingredients);
+    }
+
+    @Test
+    public void testInitialStateIngredientsEmpty() {
         assertTrue("Список ингредиентов должен быть пустым", burger.ingredients.isEmpty());
     }
 
     @Test
-    public void testRemoveIngredientFromMiddle() {
+    public void testRemoveIngredientFromMiddleSize() {
         burger.addIngredient(mockIngredient1);
         burger.addIngredient(mockIngredient2);
         burger.addIngredient(mockIngredient3);
@@ -50,24 +58,63 @@ public class BurgerAdditionalTest {
         burger.removeIngredient(1); // Удаляем средний ингредиент
         
         assertEquals("Должно остаться 2 ингредиента", 2, burger.ingredients.size());
+    }
+
+    @Test
+    public void testRemoveIngredientFromMiddleFirstStays() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        burger.removeIngredient(1); // Удаляем средний ингредиент
+        
         assertEquals("Первый ингредиент должен остаться на месте", mockIngredient1, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void testRemoveIngredientFromMiddleThirdMoves() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        burger.removeIngredient(1); // Удаляем средний ингредиент
+        
         assertEquals("Третий ингредиент должен сдвинуться", mockIngredient3, burger.ingredients.get(1));
+    }
+
+    @Test
+    public void testRemoveIngredientFromMiddleSecondRemoved() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        burger.removeIngredient(1); // Удаляем средний ингредиент
+        
         assertFalse("Второй ингредиент должен быть удален", burger.ingredients.contains(mockIngredient2));
     }
 
     @Test
-    public void testRemoveLastIngredient() {
+    public void testRemoveLastIngredientSize() {
         burger.addIngredient(mockIngredient1);
         burger.addIngredient(mockIngredient2);
         
         burger.removeIngredient(1); // Удаляем последний ингредиент
         
         assertEquals("Должен остаться 1 ингредиент", 1, burger.ingredients.size());
+    }
+
+    @Test
+    public void testRemoveLastIngredientFirstStays() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        
+        burger.removeIngredient(1); // Удаляем последний ингредиент
+        
         assertEquals("Первый ингредиент должен остаться", mockIngredient1, burger.ingredients.get(0));
     }
 
     @Test
-    public void testMoveIngredientToBeginning() {
+    public void testMoveIngredientToBeginningThirdFirst() {
         burger.addIngredient(mockIngredient1);
         burger.addIngredient(mockIngredient2);
         burger.addIngredient(mockIngredient3);
@@ -76,12 +123,34 @@ public class BurgerAdditionalTest {
         burger.moveIngredient(2, 0);
         
         assertEquals("Третий ингредиент должен быть первым", mockIngredient3, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void testMoveIngredientToBeginningFirstSecond() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        // Перемещаем последний ингредиент в начало
+        burger.moveIngredient(2, 0);
+        
         assertEquals("Первый ингредиент должен быть вторым", mockIngredient1, burger.ingredients.get(1));
+    }
+
+    @Test
+    public void testMoveIngredientToBeginningSecondThird() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        // Перемещаем последний ингредиент в начало
+        burger.moveIngredient(2, 0);
+        
         assertEquals("Второй ингредиент должен быть третьим", mockIngredient2, burger.ingredients.get(2));
     }
 
     @Test
-    public void testMoveIngredientToEnd() {
+    public void testMoveIngredientToEndSecondFirst() {
         burger.addIngredient(mockIngredient1);
         burger.addIngredient(mockIngredient2);
         burger.addIngredient(mockIngredient3);
@@ -90,7 +159,29 @@ public class BurgerAdditionalTest {
         burger.moveIngredient(0, 2);
         
         assertEquals("Второй ингредиент должен быть первым", mockIngredient2, burger.ingredients.get(0));
+    }
+
+    @Test
+    public void testMoveIngredientToEndThirdSecond() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        // Перемещаем первый ингредиент в конец (позиция 2, так как у нас 3 элемента)
+        burger.moveIngredient(0, 2);
+        
         assertEquals("Третий ингредиент должен быть вторым", mockIngredient3, burger.ingredients.get(1));
+    }
+
+    @Test
+    public void testMoveIngredientToEndFirstThird() {
+        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredient3);
+        
+        // Перемещаем первый ингредиент в конец (позиция 2, так как у нас 3 элемента)
+        burger.moveIngredient(0, 2);
+        
         assertEquals("Первый ингредиент должен быть третьим", mockIngredient1, burger.ingredients.get(2));
     }
 
