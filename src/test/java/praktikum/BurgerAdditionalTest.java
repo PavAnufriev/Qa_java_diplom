@@ -2,6 +2,7 @@ package praktikum;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.assertj.core.api.SoftAssertions;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -220,25 +221,25 @@ public class BurgerAdditionalTest {
         burger.addIngredient(mockIngredient1);
         burger.addIngredient(mockIngredient2);
         
-        String receipt = burger.getReceipt();
-        
-        // Проверяем структуру чека
-        assertTrue("Чек должен начинаться с булочки", receipt.startsWith("(==== Test Bun ====)"));
-        assertTrue("Чек должен содержать цену", receipt.contains("Price: 21.5"));
-        assertTrue("Чек должен содержать начинку", receipt.contains("= filling Lettuce ="));
-        assertTrue("Чек должен содержать соус", receipt.contains("= sauce Mayo ="));
-        
-        // Проверяем правильный порядок строк
-        int topBunIndex = receipt.indexOf("(==== Test Bun ====)");
-        int fillingIndex = receipt.indexOf("= filling Lettuce =");
-        int sauceIndex = receipt.indexOf("= sauce Mayo =");
-        int bottomBunIndex = receipt.lastIndexOf("(==== Test Bun ====)");
-        int priceIndex = receipt.indexOf("Price:");
-        
-        assertTrue("Начинка должна быть после верхней булочки", fillingIndex > topBunIndex);
-        assertTrue("Соус должен быть после начинки", sauceIndex > fillingIndex);
-        assertTrue("Нижняя булочка должна быть после соуса", bottomBunIndex > sauceIndex);
-        assertTrue("Цена должна быть в конце", priceIndex > bottomBunIndex);
+    String receipt = burger.getReceipt();
+
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(receipt).as("старт с булочки").startsWith("(==== Test Bun ====)");
+    softly.assertThat(receipt).as("наличие цены").contains("Price: 21.5");
+    softly.assertThat(receipt).as("начинка строка").contains("= filling Lettuce =");
+    softly.assertThat(receipt).as("соус строка").contains("= sauce Mayo =");
+
+    int topBunIndex = receipt.indexOf("(==== Test Bun ====)");
+    int fillingIndex = receipt.indexOf("= filling Lettuce =");
+    int sauceIndex = receipt.indexOf("= sauce Mayo =");
+    int bottomBunIndex = receipt.lastIndexOf("(==== Test Bun ====)");
+    int priceIndex = receipt.indexOf("Price:");
+
+    softly.assertThat(fillingIndex).as("порядок: начинка после верха").isGreaterThan(topBunIndex);
+    softly.assertThat(sauceIndex).as("порядок: соус после начинки").isGreaterThan(fillingIndex);
+    softly.assertThat(bottomBunIndex).as("порядок: низ после соуса").isGreaterThan(sauceIndex);
+    softly.assertThat(priceIndex).as("порядок: цена после низа").isGreaterThan(bottomBunIndex);
+    softly.assertAll();
     }
 
     @Test
@@ -248,13 +249,12 @@ public class BurgerAdditionalTest {
         
         burger.setBuns(mockBun);
         
-        String receipt = burger.getReceipt();
-        
-        // Проверяем наличие переносов строк
-        assertTrue("Чек должен содержать переносы строк", receipt.contains("\n"));
-        
-        // Проверяем формат цены (число с плавающей точкой) с учетом многострочного чека
-        assertTrue("Цена должна быть в правильном формате", receipt.matches("(?s).*Price: \\d+\\.\\d+.*"));
+    String receipt = burger.getReceipt();
+
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(receipt).as("переносы строк").contains("\n");
+    softly.assertThat(receipt).as("формат цены").matches("(?s).*Price: \\d+\\.\\d+.*");
+    softly.assertAll();
     }
 
     @Test

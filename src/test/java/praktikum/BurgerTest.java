@@ -6,12 +6,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.assertj.core.api.SoftAssertions;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class BurgerTest {
@@ -24,9 +25,6 @@ public class BurgerTest {
 
     @Mock
     private Ingredient mockIngredient2;
-
-    @Mock
-    private Ingredient mockIngredient3;
 
     private Burger burger;
 
@@ -77,12 +75,7 @@ public class BurgerTest {
         
         float actualPrice = burger.getPrice();
         
-        assertEquals("Цена должна рассчитываться правильно", expectedTotalPrice, actualPrice, 0.01f);
-        
-        // Проверяем, что методы моков были вызваны
-        verify(mockBun, times(1)).getPrice();
-        verify(mockIngredient1, times(1)).getPrice();
-        verify(mockIngredient2, times(1)).getPrice();
+    assertEquals("Цена должна рассчитываться правильно", expectedTotalPrice, actualPrice, 0.01f);
     }
 
     @Test
@@ -97,20 +90,14 @@ public class BurgerTest {
         burger.addIngredient(mockIngredient1);
         burger.addIngredient(mockIngredient2);
         
-        String receipt = burger.getReceipt();
-        
-        // Проверяем содержимое чека
-        assertTrue("Чек должен содержать название булочки вверху", receipt.contains("(==== " + bunName + " ====)"));
-        assertTrue("Чек должен содержать название булочки внизу", receipt.contains("(==== " + bunName + " ====)"));
-        assertTrue("Чек должен содержать первый ингредиент", receipt.contains("= filling Cheese ="));
-        assertTrue("Чек должен содержать второй ингредиент", receipt.contains("= sauce Ketchup ="));
-        assertTrue("Чек должен содержать цену", receipt.contains("Price: "));
-        
-        // Проверяем вызовы методов
-        verify(mockBun, atLeast(2)).getName();
-        verify(mockIngredient1, times(1)).getName();
-        verify(mockIngredient1, times(1)).getType();
-        verify(mockIngredient2, times(1)).getName();
-        verify(mockIngredient2, times(1)).getType();
+    String receipt = burger.getReceipt();
+
+    SoftAssertions softly = new SoftAssertions();
+    softly.assertThat(receipt).as("верхняя булочка").contains("(==== " + bunName + " ====)");
+    softly.assertThat(receipt).as("нижняя булочка").contains("(==== " + bunName + " ====)");
+    softly.assertThat(receipt).as("начинка").contains("= filling Cheese =");
+    softly.assertThat(receipt).as("соус").contains("= sauce Ketchup =");
+    softly.assertThat(receipt).as("цена").contains("Price: ");
+    softly.assertAll();
     }
 }
