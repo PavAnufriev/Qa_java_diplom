@@ -2,6 +2,7 @@ package praktikum;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Модель бургера.
@@ -49,7 +50,8 @@ public class Burger {
         }
 
         receipt.append(String.format("(==== %s ====)%n", bun.getName()));
-        receipt.append(String.format("%nPrice: %f%n", getPrice()));
+        // Ensure locale-independent decimal separator and stable precision
+        receipt.append(String.format(Locale.US, "%nPrice: %.6f%n", getPrice()));
 
         return receipt.toString();
     }
